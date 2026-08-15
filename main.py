@@ -641,7 +641,7 @@ formulario.addEventListener("submit", async (evento) => {
     agregarMensaje("asistente", datos.respuesta);
   } catch (error) {
     pensando.remove();
-    agregarMensaje("asistente", "Error: " + error.message);
+    agregarMensaje("asistente", "Aún no tengo datos para responderte sobre ese tema, ¡pero! cuando actualice mi información podremos platicar ampliamente. Por ahora soy una versión bb de lo que voy a llegar a ser. 😅");
   } finally {
     boton.disabled = false;
     entrada.focus();
