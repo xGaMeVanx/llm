@@ -1,4 +1,4 @@
-# Agente del Instituto Nébula — despliegue
+# Agente de IA
 
 Esta carpeta es un repositorio completo y autosuficiente. Contiene un agente que
 responde preguntas sobre el Instituto Nébula usando tres herramientas, expuesto como una
@@ -247,5 +247,3 @@ git push
 ```
 
 Render detecta el push y redespliega solo. No hay que tocar nada en su panel.
-#   l l m  
- 

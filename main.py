@@ -388,7 +388,7 @@ def correr_agente(pregunta):
 # 4. LA API
 # =====================================================================================
 
-app = FastAPI(title="Agente Instituto Nébula")
+app = FastAPI(title="Agente de IA")
 
 # Abierto a propósito: el cliente de Streamlit corre en localhost, en otra máquina.
 app.add_middleware(
@@ -427,7 +427,7 @@ PAGINA = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agente Instituto Nébula</title>
+<title>Agente de IA</title>
 <style>
   :root { color-scheme: light dark; }
   body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 3rem auto;
@@ -449,7 +449,7 @@ PAGINA = """<!doctype html>
 </style>
 </head>
 <body>
-  <h1>Agente del Instituto Nébula</h1>
+  <h1>Agente de IA</h1>
   <p class="sub">Pregunta por cursos, precios, becas o cupos.</p>
 
   <form id="formulario">
