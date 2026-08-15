@@ -567,28 +567,34 @@ PAGINA = """<!doctype html>
 <title>LLMario</title>
 <style>
   :root { color-scheme: light dark; }
-  body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 0 auto;
-         padding: 3rem 1rem; line-height: 1.6; text-align: center; }
-  h1 { font-size: 1.6rem; margin-bottom: .2rem; color: #e52521; }
-  p.sub { opacity: .7; margin-top: 0; }
-  form { display: flex; gap: .5rem; margin: 1.5rem auto; max-width: 40rem; }
-  input { flex: 1; padding: .7rem; font-size: 1rem; border: 1px solid #8888;
-          border-radius: .4rem; background: transparent; color: inherit; }
-  button { padding: .7rem 1.2rem; font-size: 1rem; border: 0; border-radius: .4rem;
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, sans-serif; height: 100vh; margin: 0;
+         display: flex; flex-direction: column; }
+  h1 { font-size: 1.4rem; color: #e52521; text-align: center; margin: 1rem 0 .5rem; }
+  #chat { flex: 1; overflow-y: auto; padding: 0 1rem 1rem; display: flex;
+          flex-direction: column; gap: .6rem; max-width: 46rem; width: 100%;
+          margin: 0 auto; }
+  .msg { max-width: 85%; padding: .6rem .9rem; border-radius: 1rem;
+         white-space: pre-wrap; line-height: 1.5; }
+  .msg.user { align-self: flex-end; background: #e52521; color: #fff;
+              border-bottom-right-radius: .25rem; }
+  .msg.asistente { align-self: flex-start; background: #8882;
+                   border-bottom-left-radius: .25rem; }
+  .msg.pensando { align-self: flex-start; opacity: .6; font-style: italic;
+                  background: transparent; }
+  form { display: flex; gap: .5rem; padding: 1rem; max-width: 46rem;
+         width: 100%; margin: 0 auto; }
+  input { flex: 1; padding: .75rem; font-size: 1rem; border: 1px solid #8888;
+          border-radius: 1.5rem; background: transparent; color: inherit; }
+  button { padding: .75rem 1.4rem; font-size: 1rem; border: 0; border-radius: 1.5rem;
            background: #e52521; color: #fff; cursor: pointer; }
   button:disabled { opacity: .5; cursor: wait; }
-  pre { white-space: pre-wrap; background: #8881; padding: 1rem;
-        border-radius: .4rem; overflow-x: auto; text-align: left; }
-  ol { background: #8881; padding: 1rem 1rem 1rem 2.5rem; border-radius: .4rem;
-       text-align: left; }
-  code { font-size: .85em; }
-  .etiqueta { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em;
-              opacity: .6; margin-top: 1.5rem; }
 </style>
 </head>
 <body>
   <h1>LLMario 🍄</h1>
-  <p class="sub">Tu asistente con personalidad propia.</p>
+
+  <div id="chat"></div>
 
   <form id="formulario">
     <input id="pregunta" autofocus autocomplete="off"
@@ -596,23 +602,31 @@ PAGINA = """<!doctype html>
     <button id="boton">Preguntar</button>
   </form>
 
-  <div id="salida"></div>
-
 <script>
 const formulario = document.getElementById("formulario");
 const entrada = document.getElementById("pregunta");
 const boton = document.getElementById("boton");
-const salida = document.getElementById("salida");
+const chat = document.getElementById("chat");
 let chatId = null;
+
+function agregarMensaje(clase, texto) {
+  const div = document.createElement("div");
+  div.className = "msg " + clase;
+  div.textContent = texto;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
 
 formulario.addEventListener("submit", async (evento) => {
   evento.preventDefault();
   const pregunta = entrada.value.trim();
   if (!pregunta) return;
 
-  boton.disabled = true;
-  salida.innerHTML = '<p class="etiqueta">Pensando...</p>';
+  agregarMensaje("user", pregunta);
   entrada.value = "";
+  boton.disabled = true;
+  const pensando = agregarMensaje("pensando", "Pensando...");
 
   try {
     const peticion = await fetch("/preguntar", {
@@ -623,23 +637,16 @@ formulario.addEventListener("submit", async (evento) => {
     if (!peticion.ok) throw new Error("El servidor respondió " + peticion.status);
     const datos = await peticion.json();
     chatId = datos.chat_id;
-
-    const pasos = datos.trayectoria.map(paso =>
-      "<li><code>" + paso.herramienta + "(" +
-      JSON.stringify(paso.argumentos) + ")</code></li>"
-    ).join("");
-
-    salida.innerHTML =
-      '<p class="etiqueta">Respuesta</p><pre>' + datos.respuesta + '</pre>' +
-      '<p class="etiqueta">Trayectoria — ' + datos.trayectoria.length +
-      ' herramienta(s) en ' + datos.vueltas + ' vuelta(s)</p><ol>' + pasos + '</ol>';
+    pensando.remove();
+    agregarMensaje("asistente", datos.respuesta);
   } catch (error) {
-    salida.innerHTML = '<p class="etiqueta">Error</p><pre>' + error.message + '</pre>';
+    pensando.remove();
+    agregarMensaje("asistente", "Error: " + error.message);
   } finally {
     boton.disabled = false;
+    entrada.focus();
   }
 });
-
 </script>
 </body>
 </html>
