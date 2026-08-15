@@ -553,12 +553,6 @@ def preguntar(peticion: Peticion):
     return Respuesta(respuesta=contenido, trayectoria=trayectoria, vueltas=vueltas, chat_id=chat_id)
 
 
-@app.get("/conversaciones/{chat_id}")
-def conversacion(chat_id: str):
-    """Devuelve el historial guardado de una conversación para reanudarla."""
-    return {"chat_id": chat_id, "mensajes": _cargar_historial(chat_id, limite=200)}
-
-
 @app.get("/health")
 def health():
     """Render pega aquí para saber si el servicio sigue vivo."""
@@ -613,7 +607,7 @@ const formulario = document.getElementById("formulario");
 const entrada = document.getElementById("pregunta");
 const boton = document.getElementById("boton");
 const chat = document.getElementById("chat");
-let chatId = localStorage.getItem("llmario_chat_id") || null;
+let chatId = null;
 
 function agregarMensaje(clase, texto) {
   const div = document.createElement("div");
@@ -623,21 +617,6 @@ function agregarMensaje(clase, texto) {
   chat.scrollTop = chat.scrollHeight;
   return div;
 }
-
-async function cargarHistorial(id) {
-  try {
-    const respuesta = await fetch("/conversaciones/" + id);
-    if (!respuesta.ok) return;
-    const datos = await respuesta.json();
-    for (const m of datos.mensajes) {
-      agregarMensaje(m.rol === "user" ? "user" : "asistente", m.contenido);
-    }
-  } catch (error) {
-    // sin historial en el servidor: empezamos de cero
-  }
-}
-
-if (chatId) cargarHistorial(chatId);
 
 formulario.addEventListener("submit", async (evento) => {
   evento.preventDefault();
@@ -658,7 +637,6 @@ formulario.addEventListener("submit", async (evento) => {
     if (!peticion.ok) throw new Error("El servidor respondió " + peticion.status);
     const datos = await peticion.json();
     chatId = datos.chat_id;
-    localStorage.setItem("llmario_chat_id", chatId);
     pensando.remove();
     agregarMensaje("asistente", datos.respuesta);
   } catch (error) {
