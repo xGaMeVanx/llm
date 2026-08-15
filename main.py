@@ -592,7 +592,7 @@ PAGINA = """<!doctype html>
 </style>
 </head>
 <body>
-  <h1>LLMario 🍄</h1>
+  <h1>LLMario 💀</h1>
 
   <div id="chat"></div>
 
