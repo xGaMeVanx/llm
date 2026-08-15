@@ -567,21 +567,20 @@ PAGINA = """<!doctype html>
 <title>LLMario</title>
 <style>
   :root { color-scheme: light dark; }
-  body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 3rem auto;
-         padding: 0 1rem; line-height: 1.6; }
+  body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 0 auto;
+         padding: 3rem 1rem; line-height: 1.6; text-align: center; }
   h1 { font-size: 1.6rem; margin-bottom: .2rem; color: #e52521; }
   p.sub { opacity: .7; margin-top: 0; }
-  form { display: flex; gap: .5rem; margin: 1.5rem 0; }
+  form { display: flex; gap: .5rem; margin: 1.5rem auto; max-width: 40rem; }
   input { flex: 1; padding: .7rem; font-size: 1rem; border: 1px solid #8888;
           border-radius: .4rem; background: transparent; color: inherit; }
   button { padding: .7rem 1.2rem; font-size: 1rem; border: 0; border-radius: .4rem;
            background: #e52521; color: #fff; cursor: pointer; }
   button:disabled { opacity: .5; cursor: wait; }
-  button.secundario { background: transparent; border: 1px solid #8888;
-                      color: inherit; margin-left: .25rem; }
   pre { white-space: pre-wrap; background: #8881; padding: 1rem;
-        border-radius: .4rem; overflow-x: auto; }
-  ol { background: #8881; padding: 1rem 1rem 1rem 2.5rem; border-radius: .4rem; }
+        border-radius: .4rem; overflow-x: auto; text-align: left; }
+  ol { background: #8881; padding: 1rem 1rem 1rem 2.5rem; border-radius: .4rem;
+       text-align: left; }
   code { font-size: .85em; }
   .etiqueta { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em;
               opacity: .6; margin-top: 1.5rem; }
@@ -596,7 +595,6 @@ PAGINA = """<!doctype html>
            placeholder="Pregúntale a Mario: ¿qué dice el libro sobre la fotosíntesis?">
     <button id="boton">Preguntar</button>
   </form>
-  <button id="nueva" class="secundario">Nueva conversación</button>
 
   <div id="salida"></div>
 
@@ -614,6 +612,7 @@ formulario.addEventListener("submit", async (evento) => {
 
   boton.disabled = true;
   salida.innerHTML = '<p class="etiqueta">Pensando...</p>';
+  entrada.value = "";
 
   try {
     const peticion = await fetch("/preguntar", {
@@ -641,11 +640,6 @@ formulario.addEventListener("submit", async (evento) => {
   }
 });
 
-document.getElementById("nueva").addEventListener("click", () => {
-  chatId = null;
-  salida.innerHTML = '<p class="etiqueta">Nueva conversación</p>';
-  entrada.focus();
-});
 </script>
 </body>
 </html>
