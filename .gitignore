@@ -10,3 +10,6 @@ venv/
 
 # Sistema
 .DS_Store
+
+# Carpeta interna del agente CodeWhale
+.codewhale/
